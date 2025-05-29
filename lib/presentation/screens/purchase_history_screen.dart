@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../core/models/shopping_item_model.dart';
-import '../../../data/repositories/shopping_repository.dart';
+import '../../features/shopping/data/models/shopping_item_model.dart';
+import '../../features/shopping/domain/repositories/shopping_repository.dart';
 
 class PurchaseHistoryScreen extends StatefulWidget {
   const PurchaseHistoryScreen({super.key});

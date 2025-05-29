@@ -8,8 +8,8 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
-import '../../../core/models/shopping_item_model.dart';
-import '../../../data/repositories/shopping_repository.dart';
+import '../../features/shopping/data/models/shopping_item_model.dart';
+import '../../features/shopping/domain/repositories/shopping_repository.dart';
 
 class PurchaseStatsScreen extends StatefulWidget {
   const PurchaseStatsScreen({super.key});

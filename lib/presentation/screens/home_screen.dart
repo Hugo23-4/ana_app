@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../core/models/shopping_item_model.dart';
+import '../../features/shopping/data/models/shopping_item_model.dart';
 import '../../core/models/task_model.dart';
-import '../../data/repositories/shopping_repository.dart';
+import '../../features/shopping/domain/repositories/shopping_repository.dart';
 import '../../data/repositories/task_repository.dart';
 import '../../data/repositories/finance_repository.dart';
 import '../../data/repositories/event_repository.dart';
