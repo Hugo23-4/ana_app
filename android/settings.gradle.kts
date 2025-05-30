@@ -23,4 +23,3 @@ plugins {
 }
 
 include(":app")
-rootProject.name = "ana_app"
