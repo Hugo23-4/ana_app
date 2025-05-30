@@ -2,11 +2,11 @@ import 'dart:async';
 import '../entities/shopping_item.dart';
 import '../repositories/shopping_repository.dart';
 
-class GetShoppingItemsUseCase {
+class GetPurchasedItemsUseCase {
   final ShoppingRepository _repository;
-  GetShoppingItemsUseCase(this._repository);
+  GetPurchasedItemsUseCase(this._repository);
 
   Stream<List<ShoppingItem>> call() {
-    return _repository.getPendingItems();
+    return _repository.getPurchasedItems();
   }
 }

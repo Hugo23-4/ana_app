@@ -1,11 +1,11 @@
 import '../entities/shopping_item.dart';
 import '../repositories/shopping_repository.dart';
 
-class AddShoppingItemUseCase {
+class UpdateShoppingItemUseCase {
   final ShoppingRepository _repository;
-  AddShoppingItemUseCase(this._repository);
+  UpdateShoppingItemUseCase(this._repository);
 
   Future<void> call(ShoppingItem item) {
-    return _repository.addItem(item);
+    return _repository.updateItem(item);
   }
 }
