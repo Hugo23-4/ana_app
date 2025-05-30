@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:speech_to_text/speech_to_text.dart' as stt;
+// import 'package:speech_to_text/speech_to_text.dart' as stt; // (Temporalmente eliminado)
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
@@ -11,7 +11,7 @@ class AssistantScreen extends StatefulWidget {
 }
 
 class _AssistantScreenState extends State<AssistantScreen> {
-  late stt.SpeechToText _speech;
+  // late stt.SpeechToText _speech; // Reconocimiento de voz deshabilitado temporalmente
   late FlutterTts _tts;
   bool _isListening = false;
   String _recognizedText = '';
@@ -21,7 +21,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
   @override
   void initState() {
     super.initState();
-    _speech = stt.SpeechToText();
+    // _speech = stt.SpeechToText(); // Temporalmente deshabilitado
     _tts = FlutterTts();
     _loadPreferences();
   }
@@ -33,31 +33,33 @@ class _AssistantScreenState extends State<AssistantScreen> {
     });
   }
 
+// TODO: Reinsertar lógica de reconocimiento de voz (SpeechToText) aquí más adelante
   Future<void> _startListening() async {
-    bool available = await _speech.initialize(
-      onStatus: (status) => print('onStatus: $status'),
-      onError: (error) => print('onError: $error'),
-    );
-    if (available) {
-      setState(() => _isListening = true);
-      _speech.listen(
-        onResult: (result) {
-          setState(() {
-            _recognizedText = result.recognizedWords;
-          });
-        },
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Micrófono no disponible')),
-      );
-    }
+//    bool available = await _speech.initialize(
+//      onStatus: (status) => print('onStatus: $status'),
+//      onError: (error) => print('onError: $error'),
+//    );
+//    if (available) {
+//      setState(() => _isListening = true);
+//      _speech.listen(
+//        onResult: (result) {
+//          setState(() {
+//            _recognizedText = result.recognizedWords;
+//          });
+//        },
+//      );
+//    } else {
+//      ScaffoldMessenger.of(context).showSnackBar(
+//        const SnackBar(content: Text('Micrófono no disponible')),
+//      );
+//    }
   }
 
+// TODO: Reanudar funcionalidad de voz en _stopListening() más adelante
   void _stopListening() {
-    _speech.stop();
-    setState(() => _isListening = false);
-    _interpretCommand(_recognizedText);
+//    _speech.stop();
+//    setState(() => _isListening = false);
+//    _interpretCommand(_recognizedText);
   }
 
   // Lógica de TTS: "Ana" hablando
