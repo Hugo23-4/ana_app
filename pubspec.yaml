@@ -54,6 +54,11 @@ dependencies:
   speech_to_text: ^6.6.2
   flutter_tts: ^3.6.3
 
+  provider: ^6.0.5          # para ChangeNotifier / context.read / Consumer
+  shared_preferences: ^2.2.2
+  intl: ^0.18.0             # usado por varias pantallas
+  
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

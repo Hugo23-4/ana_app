@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../core/models/reminder_model.dart';
 import '../../../data/repositories/reminder_repository.dart';
-import '../../../core/services/notification_service.dart';
+import 'package:ana_app/core/models/services/notification_service.dart';
 
 class ReminderListScreen extends StatefulWidget {
   const ReminderListScreen({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../core/services/notification_service.dart';
+import 'package:ana_app/core/models/services/notification_service.dart';
 
 class CreateReminderScreen extends StatefulWidget {
   const CreateReminderScreen({super.key});
