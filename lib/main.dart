@@ -46,7 +46,12 @@ void main() async {
     await FirebaseAuth.instance.signInAnonymously();
   }
 
-  await NotificationService.init(); // Inicializar notificaciones
+  // Inicializar notificaciones con manejo de errores
+  try {
+    await NotificationService.init();
+  } catch (e) {
+    debugPrint('Error al inicializar notificaciones: $e');
+  }
 
   runApp(const MyApp());
 }

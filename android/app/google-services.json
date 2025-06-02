@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "101352511563",
+    "project_id": "ana-app-87b59",
+    "storage_bucket": "ana-app-87b59.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:101352511563:android:29054dc51d83392b1c55ce",
+        "android_client_info": {
+          "package_name": "com.example.ana_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABUT1Y-pEZic9y9-zndEO4nmC_lffwEH0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
