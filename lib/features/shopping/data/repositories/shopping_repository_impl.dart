@@ -2,124 +2,108 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../domain/entities/shopping_item.dart';
 import '../../domain/repositories/shopping_repository.dart';
-import '../models/shopping_item_model.dart';
 
 class ShoppingRepositoryImpl implements ShoppingRepository {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  /// Referencia a la colección de artículos de compra del usuario actual en Firestore.
-  CollectionReference<Map<String, dynamic>> get _shoppingCollection {
-    final user = _auth.currentUser;
-    final uid = user?.uid;
-    // Si no hay usuario autenticado, apuntamos a una colección vacía ficticia
+  CollectionReference<Map<String, dynamic>> _itemsCollection() {
+    final uid = _auth.currentUser?.uid;
     if (uid == null) {
-      return _firestore.collection('users').doc('guest').collection('shoppingItems');
+      throw Exception('Usuario no autenticado; uid nulo');
     }
-    return _firestore.collection('users').doc(uid).collection('shoppingItems');
+    // shopping_lists / <uid> / items
+    return _db.collection('shopping_lists').doc(uid).collection('items');
   }
 
   @override
   Stream<List<ShoppingItem>> getPendingItems() {
-    try {
-      return _shoppingCollection
-          .where('isBought', isEqualTo: false)
-          .orderBy('createdAt', descending: false)
-          .snapshots()
-          .map((snapshot) {
-            return snapshot.docs
-                .map<ShoppingItem>((doc) => ShoppingItemModel.fromSnapshot(doc))
-                .toList();
-          });
-    } catch (e) {
-      // En caso de error, retornar stream vacío
-      return Stream.value(<ShoppingItem>[]);
-    }
+    return _itemsCollection()
+        .where('isBought', isEqualTo: false)
+        .orderBy('createdAt', descending: false)
+        .snapshots()
+        .map((snap) => snap.docs
+            .map(
+              (d) => ShoppingItem(
+                id: d.id,
+                name: d['name'] ?? '',
+                quantity: d['quantity'] ?? 1,
+                note: d['note'] ?? '',
+                category: d['category'] ?? '',
+                isBought: d['isBought'] ?? false,
+                isRecurring: d['isRecurring'] ?? false,
+                createdAt: (d['createdAt'] as Timestamp?)?.toDate() ??
+                    DateTime.now(),
+              ),
+            )
+            .toList());
   }
 
   @override
   Stream<List<ShoppingItem>> getPurchasedItems() {
-    try {
-      return _shoppingCollection
-          .where('isBought', isEqualTo: true)
-          .orderBy('createdAt', descending: true)
-          .snapshots()
-          .map((snapshot) {
-            return snapshot.docs
-                .map<ShoppingItem>((doc) => ShoppingItemModel.fromSnapshot(doc))
-                .toList();
-          });
-    } catch (e) {
-      return Stream.value(<ShoppingItem>[]);
-    }
+    return _itemsCollection()
+        .where('isBought', isEqualTo: true)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snap) => snap.docs
+            .map(
+              (d) => ShoppingItem(
+                id: d.id,
+                name: d['name'] ?? '',
+                quantity: d['quantity'] ?? 1,
+                note: d['note'] ?? '',
+                category: d['category'] ?? '',
+                isBought: d['isBought'] ?? false,
+                isRecurring: d['isRecurring'] ?? false,
+                createdAt: (d['createdAt'] as Timestamp?)?.toDate() ??
+                    DateTime.now(),
+              ),
+            )
+            .toList());
   }
 
   @override
   Future<void> addItem(ShoppingItem item) async {
-    final user = _auth.currentUser;
-    if (user == null) {
-      throw Exception('Usuario no autenticado');
-    }
-    // Generar nuevo ID de documento
-    final docRef = _shoppingCollection.doc();
-    final newId = docRef.id;
-    // Crear modelo con el nuevo ID
-    final newItemModel = ShoppingItemModel(
-      id: newId,
-      name: item.name,
-      quantity: item.quantity,
-      note: item.note,
-      category: item.category,
-      isBought: false,
-      isRecurring: item.isRecurring,
-      createdAt: item.createdAt,
-    );
-    await docRef.set(newItemModel.toMap());
+    await _itemsCollection().add({
+      'name': item.name,
+      'quantity': item.quantity,
+      'note': item.note,
+      'category': item.category,
+      'isBought': false,
+      'isRecurring': item.isRecurring,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
   }
 
   @override
-  Future<void> updateItem(ShoppingItem item) async {
-    final user = _auth.currentUser;
-    if (user == null) {
-      throw Exception('Usuario no autenticado');
-    }
-    final docRef = _shoppingCollection.doc(item.id);
-    final itemModel = ShoppingItemModel.fromEntity(item);
-    await docRef.update(itemModel.toMap());
+  Future<void> updateItem(ShoppingItem item) {
+    return _itemsCollection().doc(item.id).update({
+      'name': item.name,
+      'quantity': item.quantity,
+      'note': item.note,
+      'category': item.category,
+      'isRecurring': item.isRecurring,
+    });
   }
 
   @override
-  Future<void> deleteItem(String id) async {
-    final user = _auth.currentUser;
-    if (user == null) {
-      throw Exception('Usuario no autenticado');
-    }
-    final docRef = _shoppingCollection.doc(id);
-    await docRef.delete();
+  Future<void> deleteItem(String id) {
+    return _itemsCollection().doc(id).delete();
   }
 
   @override
   Future<void> toggleBought(String id) async {
-    final user = _auth.currentUser;
-    if (user == null) {
-      throw Exception('Usuario no autenticado');
-    }
-    final docRef = _shoppingCollection.doc(id);
-    // Obtener el estado actual y actualizar al contrario
-    final snapshot = await docRef.get();
-    final currentStatus = (snapshot.data()?['isBought'] ?? false) as bool;
-    await docRef.update({'isBought': !currentStatus});
+    final doc = _itemsCollection().doc(id);
+    final snap = await doc.get();
+    final current = snap['isBought'] as bool? ?? false;
+    await doc.update({'isBought': !current});
   }
 
   @override
   Future<void> toggleRecurring(String id) async {
-    final user = _auth.currentUser;
-    if (user == null) {
-      throw Exception('Usuario no autenticado');
-    }
-    final docRef = _shoppingCollection.doc(id);
-    final snapshot = await docRef.get();
-    final currentStatus = (snapshot.data()?['isRecurring'] ?? false) as bool;
-    await docRef.update({'isRecurring': !currentStatus});
+    final doc = _itemsCollection().doc(id);
+    final snap = await doc.get();
+    final current = snap['isRecurring'] as bool? ?? false;
+    await doc.update({'isRecurring': !current});
   }
 }

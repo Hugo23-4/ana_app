@@ -5,25 +5,6 @@ import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
 import 'core/models/services/notification_service.dart';
-
-// Pantallas principales (deshabilitadas temporalmente)
-// import 'presentation/screens/auth_screen.dart';
-// import 'presentation/screens/home_screen.dart';
-
-// Rutas adicionales (deshabilitadas temporalmente)
-// import 'presentation/screens/create_reminder_screen.dart';
-// import 'presentation/screens/reminder_list_screen.dart';
-// import 'presentation/screens/events_screen.dart';
-// import 'presentation/screens/tasks_screen.dart';
-// import 'presentation/screens/draw_note_screen.dart';
-// import 'presentation/screens/notes_screen.dart';
-// import 'presentation/screens/shopping_screen.dart';
-// import 'presentation/screens/finances_screen.dart';
-// import 'presentation/screens/purchase_history_screen.dart';
-// import 'presentation/screens/purchase_stats_screen.dart';
-// import 'presentation/screens/finance_stats_screen.dart'; // Archivo no disponible actualmente
-
-// Importaciones para la funcionalidad de Shopping
 import 'features/shopping/data/repositories/shopping_repository_impl.dart';
 import 'features/shopping/domain/usecases/get_shopping_items_usecase.dart';
 import 'features/shopping/domain/usecases/get_purchased_items_usecase.dart';
@@ -35,29 +16,29 @@ import 'features/shopping/domain/usecases/toggle_shopping_item_recurring_usecase
 import 'features/shopping/presentation/notifiers/shopping_notifier.dart';
 import 'features/shopping/presentation/pages/shopping_page.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Iniciar sesión anónima para no requerir autenticación al usar ShoppingPage
+  // Login anónimo
   if (FirebaseAuth.instance.currentUser == null) {
     await FirebaseAuth.instance.signInAnonymously();
   }
 
-  // Inicializar notificaciones con manejo de errores
+  // Inicializar notificaciones (manejar posibles errores)
   try {
     await NotificationService.init();
   } catch (e) {
-    debugPrint('Error al inicializar notificaciones: $e');
+    debugPrint('Error al iniciar notificaciones: $e');
   }
 
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -71,17 +52,17 @@ class MyApp extends StatelessWidget {
           updateShoppingItemUseCase: UpdateShoppingItemUseCase(repo),
           deleteShoppingItemUseCase: DeleteShoppingItemUseCase(repo),
           toggleShoppingItemBoughtUseCase: ToggleShoppingItemBoughtUseCase(repo),
-          toggleShoppingItemRecurringUseCase: ToggleShoppingItemRecurringUseCase(repo),
+          toggleShoppingItemRecurringUseCase:
+              ToggleShoppingItemRecurringUseCase(repo),
         );
       },
       child: MaterialApp(
-        debugShowCheckedModeBanner: false,
         title: 'Ana App',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.indigo,
           scaffoldBackgroundColor: Colors.white,
         ),
-        // Rutas de pantallas antiguas inhabilitadas temporalmente
         home: const ShoppingPage(),
       ),
     );
